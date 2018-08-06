@@ -48,7 +48,7 @@ public class Utils {
         }
         return false;
     }
-    private static boolean isSimpleEquation(List<String> list) {
+    static boolean isSimpleEquation(List<String> list) {
         if (list.size() == 3 &&
                 isNumber(list.get(0)) &&
                 isOperator(list.get(1)) &&
@@ -64,45 +64,7 @@ public class Utils {
             System.out.print(msg);
         }
     }
-    static int evaluateJava(String value) {
-        int result = 0;
-        if (value.contains(" ")){
-            String[] elements = value.split(" ");
-            for (int i = 0; i < elements.length; i++) {
-                String element = elements[i];
-                if (isNumber(element)){
-                    result+=Integer.parseInt(element);
-                    continue;
-                }
-                if (isOperator(element)){
-                    if (element.equals("+")){
-                        result+=Integer.parseInt(elements[i+1]);
-                        continue;
-                    }
-                }
-                if(isJavaExpression(element)){
-                    int i1 = evaluateJava(element);
-                    String replace = value.replace(element, String.valueOf(i1));
-                    List<String> strings = listParts(replace);
-                    if (isSimpleEquation(strings)){
-                        return Integer.parseInt(solveSimpleEquation(strings));
-                    } else {
-
-                    }
-
-
-                }
-            }
-        }
-
-        if (value.contains("++")) {
-            result = doIncrement(value, result);
-        } else {
-            throw new UnsopportedOperationException("Unsupported Operation!", "XXXXXXXXXXXX");
-        }
-        return result;
-    }
-    private static List<String> listParts(String equation) {
+    static List<String> listParts(String equation) {
         List<String> list = new ArrayList<>();
         String[] split = equation.split("(?=[+])|(?<=[+])");
 
@@ -160,7 +122,7 @@ public class Utils {
         }
         return list;
     }
-    private static String solveSimpleEquation(List<String> simplifiedEquation) {
+    static String solveSimpleEquation(List<String> simplifiedEquation) {
         String result = "";
         int varA = Integer.parseInt(simplifiedEquation.get(0));
         int varB = Integer.parseInt(simplifiedEquation.get(2));
@@ -172,7 +134,7 @@ public class Utils {
 
         return result;
     }
-    private static boolean isOperator(String s) {
+    static boolean isOperator(String s) {
         if (s.equals("+") ||
                 s.equals("-") ||
                 s.equals("*") ||
@@ -186,26 +148,6 @@ public class Utils {
         for (int i = 0; i < parts.size(); i++) {
             result += parts.get(i);
         }
-        return result;
-    }
-
-    private static int doIncrement(String value, int result) {
-        String[] elements = value.split("\\+{2}");
-        String propKey = null;
-        int propVal = 0;
-
-        if (value.startsWith("++")) {
-            // pre-increment
-            propKey = elements[1];
-            propVal = Integer.parseInt(properties.getProperty(propKey));
-            result = ++propVal;
-        } else if (value.endsWith("++")) {
-            propKey = elements[0];
-            propVal = Integer.parseInt(properties.getProperty(propKey));
-            result = propVal++;
-        }
-        properties.setProperty(propKey, String.valueOf(propVal));
-        print(propKey + "=" + properties.getProperty(propKey), true);
         return result;
     }
 }
