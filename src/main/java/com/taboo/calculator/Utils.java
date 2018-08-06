@@ -1,10 +1,12 @@
 package com.taboo.calculator;
 
+import com.taboo.exceptions.UnsopportedOperationException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
-    public static String simplify(String equation) {
+    static String simplify(String equation) {
         List<String> partss = listParts(equation);
         if (isSimpleEquation(partss)) {
             return solveSimpleEquation(partss);
@@ -22,8 +24,85 @@ public class Utils {
         }
         return "BLAT!!!!";
     }
+    static boolean isNumber(String s) {
+        try {
+            Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+    static boolean isEquation(String s) {
+        if ((s.contains("+") ||
+                s.contains("-") ||
+                s.contains("/") ||
+                s.contains("*")) && (s.length() >= 2) &&
+                !s.contains("++")) {
+            return true;
+        }
+        return false;
+    }
+    static boolean isJavaExpression(String s) {
+        if (s.contains("++")) {
+            return true;
+        }
+        return false;
+    }
+    private static boolean isSimpleEquation(List<String> list) {
+        if (list.size() == 3 &&
+                isNumber(list.get(0)) &&
+                isOperator(list.get(1)) &&
+                isNumber(list.get(2))) {
+            return true;
+        }
+        return false;
+    }
+    static void print(String msg, boolean newLine) {
+        if (newLine) {
+            System.out.println(msg);
+        } else {
+            System.out.print(msg);
+        }
+    }
+    static int evaluateJava(String value) {
+        int result = 0;
+        if (value.contains(" ")){
+            String[] elements = value.split(" ");
+            for (int i = 0; i < elements.length; i++) {
+                String element = elements[i];
+                if (isNumber(element)){
+                    result+=Integer.parseInt(element);
+                    continue;
+                }
+                if (isOperator(element)){
+                    if (element.equals("+")){
+                        result+=Integer.parseInt(elements[i+1]);
+                        continue;
+                    }
+                }
+                if(isJavaExpression(element)){
+                    int i1 = evaluateJava(element);
+                    String replace = value.replace(element, String.valueOf(i1));
+                    List<String> strings = listParts(replace);
+                    if (isSimpleEquation(strings)){
+                        return Integer.parseInt(solveSimpleEquation(strings));
+                    } else {
 
-    public static List<String> listParts(String equation) {
+                    }
+
+
+                }
+            }
+        }
+
+        if (value.contains("++")) {
+            result = doIncrement(value, result);
+        } else {
+            throw new UnsopportedOperationException("Unsupported Operation!", "XXXXXXXXXXXX");
+        }
+        return result;
+    }
+    private static List<String> listParts(String equation) {
         List<String> list = new ArrayList<>();
         String[] split = equation.split("(?=[+])|(?<=[+])");
 
@@ -81,16 +160,7 @@ public class Utils {
         }
         return list;
     }
-    public static boolean isSimpleEquation(List<String> list) {
-        if (list.size() == 3 &&
-                isNumber(list.get(0)) &&
-                isOperator(list.get(1)) &&
-                isNumber(list.get(2))) {
-            return true;
-        }
-        return false;
-    }
-    public static String solveSimpleEquation(List<String> simplifiedEquation) {
+    private static String solveSimpleEquation(List<String> simplifiedEquation) {
         String result = "";
         int varA = Integer.parseInt(simplifiedEquation.get(0));
         int varB = Integer.parseInt(simplifiedEquation.get(2));
@@ -102,15 +172,7 @@ public class Utils {
 
         return result;
     }
-    public static boolean isNumber(String s) {
-        try {
-            Integer.parseInt(s);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
-    }
-    public static boolean isOperator(String s) {
+    private static boolean isOperator(String s) {
         if (s.equals("+") ||
                 s.equals("-") ||
                 s.equals("*") ||
@@ -119,34 +181,31 @@ public class Utils {
         }
         return false;
     }
-    public static boolean isJavaExpression(String s) {
-        if (s.contains("++")) {
-            return true;
-        }
-        return false;
-    }
-    public static boolean isEquation(String s) {
-        if ((s.contains("+") ||
-                s.contains("-") ||
-                s.contains("/") ||
-                s.contains("*")) && (s.length() >= 2) &&
-                !s.contains("++")) {
-            return true;
-        }
-        return false;
-    }
-    public static String listToString(List<String> parts) {
+    private static String listToString(List<String> parts) {
         String result = "";
         for (int i = 0; i < parts.size(); i++) {
             result += parts.get(i);
         }
         return result;
     }
-    public static void print(String msg, boolean newLine) {
-        if (newLine) {
-            System.out.println(msg);
-        } else {
-            System.out.print(msg);
+
+    private static int doIncrement(String value, int result) {
+        String[] elements = value.split("\\+{2}");
+        String propKey = null;
+        int propVal = 0;
+
+        if (value.startsWith("++")) {
+            // pre-increment
+            propKey = elements[1];
+            propVal = Integer.parseInt(properties.getProperty(propKey));
+            result = ++propVal;
+        } else if (value.endsWith("++")) {
+            propKey = elements[0];
+            propVal = Integer.parseInt(properties.getProperty(propKey));
+            result = propVal++;
         }
+        properties.setProperty(propKey, String.valueOf(propVal));
+        print(propKey + "=" + properties.getProperty(propKey), true);
+        return result;
     }
 }
