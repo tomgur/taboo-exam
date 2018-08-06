@@ -41,9 +41,6 @@ public class Main {
     }
 
     private static String simplify(String equation) {
-        String result = "";
-        Properties replacements = new Properties();
-
         List<String> partss = listParts(equation);
         if (isSimpleEquation(partss)) {
             return solveSimpleEquation(partss);
@@ -89,7 +86,7 @@ public class Main {
 
         if (split.length % 3 == 0) {
             for (int i = 0; i < split.length; i++) {
-                String s = split[i];
+                String s = split[i].trim();
                 int i1 = 0;
                 int i2 = 0;
 
@@ -112,13 +109,8 @@ public class Main {
                     continue;
                 }
 
-                if (s.equals("+")) {
-                    list.add("+");
-                    continue;
-                }
-
-                if (s.equals("*")) {
-                    list.add("*");
+                if (isOperator(s)) {
+                    list.add(s);
                     continue;
                 } else {
                     list = listParts(split[i - 1]);
@@ -127,9 +119,7 @@ public class Main {
                     list.add(split[i + 1]);
                 } else {
                     List<String> strings = listParts(split[i + 1]);
-                    for (String string : strings) {
-                        list.add(string);
-                    }
+                    list.addAll(strings);
                 }
                 list.add(String.valueOf(i1 + i2));
             }
@@ -223,34 +213,62 @@ public class Main {
         print("Calculation Ended", true);
     }
 
-    private static void calculateEquation(String equation) {
-        String string = simplify(equation);
-        print("simplified: " + string, true);
-
-    }
-
     private static int evaluateJava(String value) {
         int result = 0;
-        if (value.contains("++")) {
-            String[] increment = value.split("\\+{2}");
-            String propValue;
-            String propKey = null;
-            if (value.startsWith("++")) {
-                // pre-increment
-                propKey = increment[1];
-                propValue = properties.getProperty(propKey);
-                result = Integer.parseInt(propValue);
-                ++result;
-            } else if (value.endsWith("++")) {
-                propKey = increment[1];
-                propValue = properties.getProperty(increment[0]);
-                result = Integer.parseInt(propValue);
+        if (value.contains(" ")){
+            String[] elements = value.split(" ");
+            for (int i = 0; i < elements.length; i++) {
+                String element = elements[i];
+                if (isNumber(element)){
+                    result+=Integer.parseInt(element);
+                    continue;
+                }
+                if (isOperator(element)){
+                    if (element.equals("+")){
+                        result+=Integer.parseInt(elements[i+1]);
+                        continue;
+                    }
+                }
+                if(isJavaExpression(element)){
+                    int i1 = evaluateJava(element);
+                    String replace = value.replace(element, String.valueOf(i1));
+                    List<String> strings = listParts(replace);
+                    if (isSimpleEquation(strings)){
+                        return Integer.parseInt(solveSimpleEquation(strings));
+                    } else {
+
+                    }
+
+
+                }
             }
-            properties.setProperty(propKey, String.valueOf(result));
-            print(propKey + "=" + properties.getProperty(propKey), true);
+        }
+
+        if (value.contains("++")) {
+            result = doIncrement(value, result);
         } else {
             throw new UnsopportedOperationException("Unsupported Operation!", "XXXXXXXXXXXX");
         }
+        return result;
+    }
+
+    private static int doIncrement(String value, int result) {
+        String[] elements = value.split("\\+{2}");
+        String propKey = null;
+        int propVal = 0;
+
+        if (value.startsWith("++")) {
+            // pre-increment
+            propKey = elements[1];
+            propVal = Integer.parseInt(properties.getProperty(propKey));
+            result = ++propVal;
+        } else if (value.endsWith("++")) {
+            propKey = elements[0];
+            propVal = Integer.parseInt(properties.getProperty(propKey));
+            result = propVal++;
+        }
+        properties.setProperty(propKey, String.valueOf(propVal));
+        print(propKey + "=" + properties.getProperty(propKey), true);
         return result;
     }
 
