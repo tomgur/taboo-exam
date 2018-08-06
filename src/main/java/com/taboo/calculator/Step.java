@@ -13,6 +13,10 @@ public class Step {
         this.rhs = input.split("=")[1];
     }
 
+    public String getInput() {
+        return input;
+    }
+
     public String getLHS() {
         return lhs;
     }
@@ -21,10 +25,17 @@ public class Step {
         return rhs;
     }
 
+    public void setRhs(String rhs) {
+        this.rhs = rhs;
+    }
+
+    public void setLhs(String lhs) {
+        this.lhs = lhs;
+    }
+
     public boolean isStepEvaluated() {
         try {
-            Double aDouble = Double.parseDouble(getRHS());
-            evaluatedRHS = String.valueOf(aDouble);
+            int i = Integer.parseInt(getRHS());
         } catch (NumberFormatException e) {
             return false;
         }
