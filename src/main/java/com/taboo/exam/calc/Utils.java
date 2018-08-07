@@ -1,11 +1,11 @@
-package com.taboo.exam.calc;
+package taboo.exam.calc;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Utils {
-    static String simplify(String equation) {
+    public static String simplify(String equation) {
         List<String> partss = listParts(equation);
         if (isSimpleEquation(partss)) {
             return solveSimpleEquation(partss);
@@ -15,7 +15,7 @@ public class Utils {
             for (int i = 0; i < partss.size(); i++) {
                 String part = partss.get(i);
                 if (isEquation(part)) {
-                    String simplify = simplify(part);
+                    return simplify(part);
                 } else {
                     return part;
                 }
@@ -23,7 +23,7 @@ public class Utils {
         }
         return "BLAT!!!!";
     }
-    static boolean isNumber(String s) {
+    public static boolean isNumber(String s) {
         try {
             Integer.parseInt(s);
         } catch (NumberFormatException e) {
@@ -31,7 +31,7 @@ public class Utils {
         }
         return true;
     }
-    static boolean isEquation(String s) {
+    public static boolean isEquation(String s) {
         if ((s.contains("+") ||
                 s.contains("-") ||
                 s.contains("/") ||
@@ -41,13 +41,13 @@ public class Utils {
         }
         return false;
     }
-    static boolean isJavaExpression(String s) {
+    public static boolean isJavaExpression(String s) {
         if (s.contains("++")) {
             return true;
         }
         return false;
     }
-    static boolean isSimpleEquation(List<String> list) {
+    public static boolean isSimpleEquation(List<String> list) {
         if (list.size() == 3 &&
                 isNumber(list.get(0)) &&
                 isOperator(list.get(1)) &&
@@ -56,18 +56,18 @@ public class Utils {
         }
         return false;
     }
-    static void print(String msg, boolean newLine) {
+    public static void print(String msg, boolean newLine) {
         if (newLine) {
             System.out.println(msg);
         } else {
             System.out.print(msg);
         }
     }
-    static List<String> listParts(String equation) {
+    public static List<String> listParts(String equation) {
         List<String> list = new ArrayList<>();
         String[] split = equation.split("(?=[+])|(?<=[+])");
 
-        if (split.length % 3 == 0) {
+        if (split.length > 2) {
             for (int i = 0; i < split.length; i++) {
                 String s = split[i].trim();
                 int i1 = 0;
@@ -87,17 +87,14 @@ public class Utils {
                     }
                 }
 
-                if (isNumber(s)) {
+                if (isNumber(s) ||
+                        isVariable(s) ||
+                        isOperator(s)) {
                     list.add(s);
                     continue;
                 }
 
-                if (isOperator(s)) {
-                    list.add(s);
-                    continue;
-                } else {
-                    list = listParts(split[i - 1]);
-                }
+                assert (!split[i+1].equals(null));
                 if (isNumber(split[i + 1])) {
                     list.add(split[i + 1]);
                 } else {
@@ -121,11 +118,11 @@ public class Utils {
         }
         return list;
     }
-    static String solveSimpleEquation(List<String> simplifiedEquation) {
+    public static String solveSimpleEquation(List<String> equation) {
         String result = "";
-        int varA = Integer.parseInt(simplifiedEquation.get(0));
-        int varB = Integer.parseInt(simplifiedEquation.get(2));
-        String operator = simplifiedEquation.get(1);
+        int varA = Integer.parseInt(equation.get(0));
+        int varB = Integer.parseInt(equation.get(2));
+        String operator = equation.get(1);
 
         if (operator.equals("+")){
             result = String.valueOf(varA + varB);
@@ -133,7 +130,7 @@ public class Utils {
 
         return result;
     }
-    static boolean isOperator(String s) {
+    public static boolean isOperator(String s) {
         if (s.equals("+") ||
                 s.equals("-") ||
                 s.equals("*") ||
@@ -142,7 +139,16 @@ public class Utils {
         }
         return false;
     }
-    private static String listToString(List<String> parts) {
+
+    public static boolean isVariable(String s){
+        if (s.length() == 1 &&
+                s.matches("^[a-z]{1}$")) {
+            return true;
+        }
+        return false;
+    }
+
+    public static String listToString(List<String> parts) {
         String result = "";
         for (int i = 0; i < parts.size(); i++) {
             result += parts.get(i);
