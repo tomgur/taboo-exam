@@ -1,9 +1,9 @@
-package com.taboo.exam.calc;
+package taboo.exam.calc;
 
 import java.io.IOException;
 import java.util.*;
 
-import static com.taboo.exam.calc.Utils.*;
+import static taboo.exam.calc.Utils.*;
 
 public class Main {
     public static final String WELCOME_MSG =
@@ -136,9 +136,17 @@ public class Main {
         if (value.contains("++")) {
             result = doIncrement(value, result);
         } else {
-            throw new com.taboo.exam.calc.exceptions.UnsopportedOperationException("flsdkjsfdlksdjfldfskj!!!!!","+=");
+            throw new taboo.exam.calc.exceptions.UnsopportedOperationException("flsdkjsfdlksdjfldfskj!!!!!","+=");
         }
         return result;
+    }
+
+    private static String getVarValue(String s) {
+        String property = properties.getProperty(s);
+        if (property.equals("")) {
+            return null;
+        }
+        return property;
     }
 
     private static int doIncrement(String value, int result) {
