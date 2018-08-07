@@ -1,7 +1,8 @@
-package taboo.calculator;
+package com.taboo.exam.calc;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class Utils {
     static String simplify(String equation) {

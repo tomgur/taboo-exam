@@ -1,19 +1,18 @@
-package taboo.calculator;
-
+package com.taboo.exam.calc;
 
 import java.io.IOException;
 import java.util.*;
 
-import static taboo.calculator.Utils.*;
+import static com.taboo.exam.calc.Utils.*;
 
 public class Main {
     public static final String WELCOME_MSG =
             "******************************************************************************\n" +
-            "***         Hi welcome to the Tabo**** expression calculator               ***\n" +
-            "***               Please enter equations in the form of:                   ***\n" +
-            "*** 'A [arithmetic operation [+-/*] OR [java operation ++ -- += /= *=] B   ***\n" +
-            "***   New variables will be stored and can be called in later equations    ***\n" +
-            "******************************************************************************\n";
+                    "***         Hi welcome to the Tabo**** expression calculator               ***\n" +
+                    "***               Please enter equations in the form of:                   ***\n" +
+                    "*** 'A [arithmetic operation [+-/*] OR [java operation ++ -- += /= *=] B   ***\n" +
+                    "***   New variables will be stored and can be called in later equations    ***\n" +
+                    "******************************************************************************\n";
     private static boolean hasNext = true;
     private static Scanner scanner = new Scanner(System.in);
     private static Properties properties = new Properties();
@@ -84,10 +83,10 @@ public class Main {
 
             if (isEquation(rightHandSide)) {
                 String simplifiedRightHandSide = simplify(rightHandSide);
-                if(isNumber(simplifiedRightHandSide)){
-                    properties.setProperty(leftHandSide,simplifiedRightHandSide);
-                    print(leftHandSide + "=" + simplifiedRightHandSide,true);
-                }else {
+                if (isNumber(simplifiedRightHandSide)) {
+                    properties.setProperty(leftHandSide, simplifiedRightHandSide);
+                    print(leftHandSide + "=" + simplifiedRightHandSide, true);
+                } else {
                     System.err.println("ERROR - element is not a number.....");
                 }
             }
@@ -97,7 +96,7 @@ public class Main {
                 print(leftHandSide + "=" + i, true);
                 properties.setProperty(leftHandSide, String.valueOf(i));
             }
-            print(properties.toString(),true);
+            print(properties.toString(), true);
             print("------------------------", true);
         }
         print("Calculation Ended", true);
@@ -105,25 +104,25 @@ public class Main {
 
     static int evaluateJava(String value) {
         int result = 0;
-        if (value.contains(" ")){
+        if (value.contains(" ")) {
             String[] elements = value.split(" ");
             for (int i = 0; i < elements.length; i++) {
                 String element = elements[i];
-                if (isNumber(element)){
-                    result+=Integer.parseInt(element);
+                if (isNumber(element)) {
+                    result += Integer.parseInt(element);
                     continue;
                 }
-                if (isOperator(element)){
-                    if (element.equals("+")){
-                        result+=Integer.parseInt(elements[i+1]);
+                if (isOperator(element)) {
+                    if (element.equals("+")) {
+                        result += Integer.parseInt(elements[i + 1]);
                         continue;
                     }
                 }
-                if(isJavaExpression(element)){
+                if (isJavaExpression(element)) {
                     int i1 = evaluateJava(element);
                     String replace = value.replace(element, String.valueOf(i1));
                     List<String> strings = listParts(replace);
-                    if (isSimpleEquation(strings)){
+                    if (isSimpleEquation(strings)) {
                         return Integer.parseInt(solveSimpleEquation(strings));
                     } else {
 
@@ -137,7 +136,7 @@ public class Main {
         if (value.contains("++")) {
             result = doIncrement(value, result);
         } else {
-            throw new taboo.exceptions.UnsopportedOperationException("Unsupported Operation!", "XXXXXXXXXXXX");
+            throw new com.taboo.exam.calc.exceptions.UnsopportedOperationException("flsdkjsfdlksdjfldfskj!!!!!","+=");
         }
         return result;
     }
