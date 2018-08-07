@@ -1,4 +1,4 @@
-package com.taboo.exceptions;
+package taboo.exceptions;
 
 public class UnsopportedOperationException extends RuntimeException  {
     private String operation;

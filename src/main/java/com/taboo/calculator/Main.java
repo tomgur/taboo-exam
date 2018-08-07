@@ -1,11 +1,10 @@
-package com.taboo.calculator;
+package taboo.calculator;
 
-import com.taboo.exceptions.UnsopportedOperationException;
 
 import java.io.IOException;
 import java.util.*;
 
-import static com.taboo.calculator.Utils.*;
+import static taboo.calculator.Utils.*;
 
 public class Main {
     public static final String WELCOME_MSG =
@@ -138,7 +137,7 @@ public class Main {
         if (value.contains("++")) {
             result = doIncrement(value, result);
         } else {
-            throw new UnsopportedOperationException("Unsupported Operation!", "XXXXXXXXXXXX");
+            throw new taboo.exceptions.UnsopportedOperationException("Unsupported Operation!", "XXXXXXXXXXXX");
         }
         return result;
     }

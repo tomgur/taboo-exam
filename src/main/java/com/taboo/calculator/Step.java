@@ -1,4 +1,4 @@
-package com.taboo.calculator;
+package taboo.calculator;
 
 public class Step {
     private String input;

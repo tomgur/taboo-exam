@@ -1,6 +1,4 @@
-package com.taboo.calculator;
-
-import com.taboo.exceptions.UnsopportedOperationException;
+package taboo.calculator;
 
 import java.util.ArrayList;
 import java.util.List;
